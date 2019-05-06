@@ -11,10 +11,6 @@ export default {
     state.product.price = price
   },
 
-  SET_IS_EDIT_PRODUCT_VISIBLE (state, isEditProductVisible) {
-    state.product.meta.isEditProductVisible = isEditProductVisible
-  },
-
   RESET_PRODUCT (state) {
     state.product.title = ''
     state.product.description = ''

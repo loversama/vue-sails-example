@@ -1,4 +1,5 @@
 import { mapMutations } from 'vuex'
+import he from 'he'
 
 export default {
   async created () {
@@ -11,8 +12,8 @@ export default {
   }),
 
   watch: {
-    currentPage () {
-      this.$store.dispatch('getShopProducts', this.currentPage)
+    async currentPage () {
+      await this.$store.dispatch('getShopProducts', this.currentPage)
     }
   },
 
@@ -37,6 +38,8 @@ export default {
   },
 
   methods: {
+    encode: text => he.encode(text),
+
     ...mapMutations({
       pushToBasket: 'PUSH_TO_BASKET'
     })

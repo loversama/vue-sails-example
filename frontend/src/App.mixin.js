@@ -1,5 +1,6 @@
 import { mapMutations } from 'vuex'
 import locales from './locales'
+import isNull from 'lodash/isNull'
 
 export default {
   name: 'app',
@@ -8,6 +9,11 @@ export default {
 
   mounted () {
     this.$translate.setLang('en')
+  },
+
+  created () {
+    const basket = JSON.parse(sessionStorage.getItem('basket'))
+    if (!isNull(basket)) this.$store.commit('SET_BASKET', basket)
   },
 
   computed: {
@@ -29,9 +35,7 @@ export default {
   },
 
   methods: {
-    deleteCookie (cookie) {
-      document.cookie = `${cookie}=; expires=Thu, 01 Jan 1970 00:00:01 GMT;`
-    },
+    deleteCookie: cookie => { document.cookie = `${cookie}=; expires=Thu, 01 Jan 1970 00:00:01 GMT;` },
 
     ...mapMutations({
       setLocale: 'SET_LOCALE'

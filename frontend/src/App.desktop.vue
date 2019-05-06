@@ -1,9 +1,9 @@
 <template>
   <div>
     <help-index
-      v-if="isHelpVisible"
+      v-if="isVisibleHelp"
       :io="io"
-      @helpMounted="setIo">
+      @helpMounted="setIoHandler">
     </help-index>
 
     <b-navbar toggleable="md" type="dark" variant="primary">
@@ -19,10 +19,10 @@
           <b-nav-item v-if="!isUserAuthenticated" :to="{ name: 'Register'}">{{ t('app.mixin.register') }}</b-nav-item>
           <b-nav-item v-if="!isUserAuthenticated" :to="{ name: 'Login'}">{{ t('app.mixin.login') }}</b-nav-item>
           <b-nav-item v-if="isUserAuthenticated" :to="{ name: 'Shop'}">{{ t('app.mixin.shop') }}</b-nav-item>
-          <b-nav-item v-if="isUserAuthenticated" @click="logout">Logout</b-nav-item>
+          <b-nav-item v-if="isUserAuthenticated" @click="signOut">Logout</b-nav-item>
         </b-navbar-nav>
         <b-navbar-nav class="ml-auto">
-          <b-nav-item @click="setIsHelpVisible(true)">{{ t('app.mixin.help') }}</b-nav-item>
+          <b-nav-item class="d-none d-lg-block" @click="setIsVisibleHelp(true)">{{ t('app.mixin.help') }}</b-nav-item>
           <b-nav-item :disabled="!basket.products.length" v-if="isUserAuthenticated" :to="{ name: 'Basket'}">
             {{ t('app.mixin.basket') }} ({{ basket.products.length }})
           </b-nav-item>
@@ -42,7 +42,9 @@
       <div class="container">
         <span class="text-muted">
           <small>
-            This shop is not real and only for demonstration purposes. <a href="https://github.com/ndabAP/vue-sails-example">Source code</a>
+            <img src="/img/baseline-info-24px.svg">
+            This shop is not real and only for demonstration purposes.
+            <a href="https://github.com/ndabAP/vue-sails-example">Source code</a>
           </small>
         </span>
       </div>
@@ -51,74 +53,76 @@
 </template>
 
 <script>
-  import * as socketIoClient from 'socket.io-client'
-  import * as sailsIo from 'sails.io.js'
-  import { mapMutations } from 'vuex'
-  import AppMixin from './App.mixin'
+import * as socketIoClient from 'socket.io-client'
+import * as sailsIo from 'sails.io.js'
+import { mapMutations } from 'vuex'
+import AppMixin from './App.mixin'
 
-  const HelpIndex = () => import('./components/help/Help.desktop')
+const HelpIndex = () => import('./components/help/Help.desktop')
 
-  export default {
-    mixins: [AppMixin],
+export default {
+  mixins: [AppMixin],
 
-    components: {
-      HelpIndex
-    },
+  components: {
+    HelpIndex
+  },
 
-    data: () => ({
-      io: null
-    }),
+  data: () => ({
+    io: null
+  }),
 
-    computed: {
-      isHelpVisible: {
-        get () {
-          return this.$store.state.isHelpVisible
-        },
-
-        set (isHelpVisible) {
-          this.store.commit('SET_IS_HELP_VISIBLE', isHelpVisible)
-        }
+  computed: {
+    isVisibleHelp: {
+      get () {
+        return this.$store.state.isVisibleHelp
       }
-    },
-
-    watch: {
-      isHelpVisible () {
-        if (!this.isHelpVisible) this.io.socket.disconnect()
-        if (this.isHelpVisible && this.io) this.io.socket.reconnect()
-      }
-    },
-
-    methods: {
-      setIo () {
-        if (!this.io) {
-          let io = sailsIo(socketIoClient)
-
-          let isProductionEnvironment = (process.env.NODE_ENV === 'production')
-          let url
-
-          if (isProductionEnvironment) {
-            url = `${location.protocol}//${location.hostname}${location.port ? ':' + location.port : ''}`
-          } else url = 'http://localhost:1337'
-
-          io.sails.url = url
-          io.sails.environment = process.env.NODE_ENV || 'development'
-          io.sails.useCORSRouteToGetCookie = false
-
-          this.$set(this, 'io', io)
-        }
-      },
-
-      logout () {
-        this.deleteCookie('user')
-        this.isUserAuthenticated = false
-        localStorage.clear()
-
-        this.$router.push({name: 'Home'})
-      },
-
-      ...mapMutations({
-        setIsHelpVisible: 'SET_IS_HELP_VISIBLE'
-      })
     }
+  },
+
+  watch: {
+    isVisibleHelp () {
+      if (!this.isVisibleHelp) this.io.socket.disconnect()
+      if (this.isVisibleHelp && this.io) this.io.socket.reconnect()
+    }
+  },
+
+  methods: {
+    setIoHandler () {
+      if (!this.io) {
+        const isProductionEnvironment = (process.env.NODE_ENV === 'production')
+
+        let io = sailsIo(socketIoClient)
+        let url
+
+        if (isProductionEnvironment) {
+          url = `${location.protocol}//${location.hostname}${location.port ? ':' + location.port : ''}`
+        } else url = 'http://localhost:1337'
+
+        io.sails.url = url
+        io.sails.environment = process.env.NODE_ENV || 'development'
+        io.sails.useCORSRouteToGetCookie = false
+
+        this.$set(this, 'io', io)
+      }
+    },
+
+    signOut () {
+      this.deleteCookie('user')
+      this.isUserAuthenticated = false
+      localStorage.clear()
+
+      this.$router.push({name: 'Home'})
+    },
+
+    ...mapMutations({
+      setIsVisibleHelp: 'SET_IS_VISIBLE_HELP'
+    })
   }
+}
 </script>
+
+<style>
+  .info {
+    fill: #FF0000 !important
+  }
+</style>

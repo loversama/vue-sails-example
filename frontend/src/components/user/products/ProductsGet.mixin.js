@@ -3,8 +3,8 @@ export default {
     id: ''
   }),
 
-  created () {
-    this.$store.dispatch('getProductsByUser', this.user)
+  async created () {
+    await this.$store.dispatch('getProductsByUser', this.user)
   },
 
   computed: {
@@ -42,13 +42,13 @@ export default {
       }
     },
 
-    isEditProductVisible: {
+    isVisibleProductPatch: {
       get () {
-        return this.$store.state.Product.product.meta.isEditProductVisible
+        return this.$store.state.isVisibleProductPatch
       },
 
-      set (isEditProductVisible) {
-        this.$store.commit('SET_IS_EDIT_PRODUCT_VISIBLE', isEditProductVisible)
+      set (isVisibleProductPatch) {
+        this.$store.commit('SET_IS_VISIBLE_PRODUCT_PATCH', isVisibleProductPatch)
       }
     }
   }

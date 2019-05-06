@@ -8,11 +8,22 @@ import basket from './basket/basket.module'
 Vue.use(Vuex)
 
 const getCookie = name => {
-  let a = `; ${document.cookie}`.match(`;\\s*${name}=([^;]+)`)
-  return a ? a[1] : ''
+  const cookies = `; ${document.cookie}`.match(`;\\s*${name}=([^;]+)`)
+  return cookies ? cookies[1] : ''
 }
 
 export default new Vuex.Store({
+  plugins: [store => {
+    store.subscribe((mutation, state) => {
+      switch (mutation.type) {
+        case 'RESET_BASKET':
+        case 'PUSH_TO_BASKET':
+        case 'REMOVE_PRODUCT_FROM_BASKET':
+          sessionStorage.setItem('basket', JSON.stringify(state.Basket.basket))
+      }
+    })
+  }],
+
   modules: {
     User: user,
     Product: product,
@@ -23,7 +34,8 @@ export default new Vuex.Store({
   state: {
     locale: 'en',
     isUserAuthenticated: !!(getCookie('user')),
-    isHelpVisible: false
+    isVisibleHelp: false,
+    isVisibleProductPatch: false
   },
 
   mutations: {
@@ -35,8 +47,12 @@ export default new Vuex.Store({
       state.locale = locale
     },
 
-    SET_IS_HELP_VISIBLE (state, isHelpVisible) {
-      state.isHelpVisible = isHelpVisible
+    SET_IS_VISIBLE_HELP (state, isVisibleHelp) {
+      state.isVisibleHelp = isVisibleHelp
+    },
+
+    SET_IS_VISIBLE_PRODUCT_PATCH (state, isVisibleProductPatch) {
+      state.isVisibleProductPatch = isVisibleProductPatch
     }
   }
 })

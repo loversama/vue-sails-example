@@ -1,13 +1,15 @@
 <template>
-<div>
-  <mt-cell v-for="product in products" :key="product.id" :title="product.title">
-    <mt-button size="small" @click="makeProductVisible(product)">{{ t('shopindex.mixin.button.second')}}</mt-button>
-  </mt-cell>
+  <div>
+    <mt-cell v-for="product in products" :key="product.id" :title="product.title">
+      <mt-button size="small" @click="makeProductVisible(product)">{{ t('shopindex.mixin.button.second')}}</mt-button>
+    </mt-cell>
 
-  <mt-cell title="">
-    <mt-button :disabled="isNextButtonDisabled" size="small" type="primary" @click="currentPage++">{{ t('shopindex.mixin.button.third')}}</mt-button>
-  </mt-cell>
-</div>
+    <mt-cell title="">
+      <mt-button :disabled="isDisabledNextButton" size="small" type="primary" @click="currentPage++">{{
+        t('shopindex.mixin.button.third')}}
+      </mt-button>
+    </mt-cell>
+  </div>
 </template>
 
 <script>
@@ -18,7 +20,7 @@ export default {
   mixins: [ShopIndexMixin],
 
   computed: {
-    isNextButtonDisabled () {
+    isDisabledNextButton () {
       return this.currentPage === Math.ceil(this.amountOfProducts / 6)
     }
   },
@@ -27,7 +29,7 @@ export default {
     makeProductVisible (product) {
       MessageBox({
         title: product.title,
-        message: product.description,
+        message: this.encode(product.description),
         showCancelButton: true,
         cancelButtonText: this.t('shopindex.mixin.cancelButtonText'),
         confirmButtonText: `${this.t('shopindex.mixin.confirmButtonText')} $${product.price}`

@@ -8,8 +8,8 @@ Vue.use(MintUI)
 
 Vue.http.interceptors.push((request, next) => {
   if (request.url !== '/api/login/post') {
-    let token = window.localStorage.getItem('token')
-    request.headers.set('token', token)
+    const xToken = window.localStorage.getItem('x-token')
+    request.headers.set('X-Token', xToken)
   }
 
   next(response => {
@@ -22,8 +22,8 @@ Vue.http.interceptors.push((request, next) => {
 router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.userOnly)) {
     const getCookie = name => {
-      let a = `; ${document.cookie}`.match(`;\\s*${name}=([^;]+)`)
-      return a ? a[1] : ''
+      let cookies = `; ${document.cookie}`.match(`;\\s*${name}=([^;]+)`)
+      return cookies ? cookies[1] : ''
     }
 
     if (getCookie('user')) {

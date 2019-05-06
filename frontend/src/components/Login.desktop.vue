@@ -7,7 +7,7 @@
       <b-form-fieldset :description="t('login.mixin.description.second')" :label="t('login.mixin.label.second')">
         <b-form-input v-model="password" type="password"></b-form-input>
       </b-form-fieldset>
-      <b-button variant="outline-success" size="sm" @click="login">{{ t('login.mixin.button.first') }}</b-button>
+      <b-button variant="outline-success" size="sm" @click="signIn">{{ t('login.mixin.button.first') }}</b-button>
     </div>
     <div class="col-6">
       <figure class="figure">
@@ -32,9 +32,9 @@
 </template>
 
 <script>
-  import LoginMixin from './Login.mixin'
+import LoginMixin from './Login.mixin'
 
-  export default {
-    mixins: [LoginMixin]
-  }
+export default {
+  mixins: [LoginMixin]
+}
 </script>
